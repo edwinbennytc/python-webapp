@@ -12,10 +12,20 @@ This is a simple message board application built with Flask and SQLite.
 ### Build the Docker Image
 docker build -t python-webapp .
 
+![docker build](images/docker_build_screenshot.png)
+
 ### Run the Docker Container
 docker run -p 5000:5000 python-webapp
 
+![docker run](images/docker_run_screenshot.png)
+
 The application will be accessible at `http://localhost:5000`.
+
+Home Page:
+![Application Home](images/website_home.png)
+
+About Page:
+![Application About](images/website_about_page.png)
 
 ## Project Structure
 .
