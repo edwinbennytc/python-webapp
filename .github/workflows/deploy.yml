@@ -30,16 +30,8 @@ jobs:
         docker build -t $ECR_REPOSITORY_URI:latest .
         docker push $ECR_REPOSITORY_URI:latest
 
-    - name: Deploy to Elastic Beanstalk
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
-        EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
-        EB_APP_NAME: ${{ secrets.EB_APP_NAME }}
+    - name: Create Dockerrun.aws.json file
       run: |
-        # Create a Dockerrun.aws.json file
         echo '{
           "AWSEBDockerrunVersion": 1,
           "Image": {
@@ -52,15 +44,29 @@ jobs:
             }
           ]
         }' > Dockerrun.aws.json
-        
-        # Zip the Dockerrun.aws.json file
-        zip deploy.zip Dockerrun.aws.json
-        
-        # Deploy to Elastic Beanstalk
+
+    - name: Upload Dockerrun.aws.json to S3
+      env:
+        S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        S3_KEY: Dockerrun.aws.json
+      run: |
+        aws s3 cp Dockerrun.aws.json s3://$S3_BUCKET/$S3_KEY
+
+    - name: Deploy to Elastic Beanstalk
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
+        EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
+        EB_APP_NAME: ${{ secrets.EB_APP_NAME }}
+        S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        S3_KEY: Dockerrun.aws.json
+      run: |
         aws elasticbeanstalk create-application-version \
           --application-name $EB_APP_NAME \
           --version-label v$(date +%s) \
-          --source-bundle S3Bucket=$ECR_REPOSITORY_URI,Dockerrun.aws.json=deploy.zip
+          --source-bundle S3Bucket=$S3_BUCKET,S3Key=$S3_KEY
         
         aws elasticbeanstalk update-environment \
           --environment-name $EB_ENV_NAME \
