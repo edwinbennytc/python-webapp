@@ -52,7 +52,7 @@ jobs:
       run: |
         aws s3 cp Dockerrun.aws.json s3://$S3_BUCKET/$S3_KEY
 
-    - name: Deploy to Elastic Beanstalk
+    - name: Create application version and update environment
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -63,11 +63,13 @@ jobs:
         S3_BUCKET: ${{ secrets.S3_BUCKET }}
         S3_KEY: Dockerrun.aws.json
       run: |
+        VERSION_LABEL=v$(date +%s)
+
         aws elasticbeanstalk create-application-version \
           --application-name $EB_APP_NAME \
-          --version-label v$(date +%s) \
+          --version-label $VERSION_LABEL \
           --source-bundle S3Bucket=$S3_BUCKET,S3Key=$S3_KEY
-        
+
         aws elasticbeanstalk update-environment \
           --environment-name $EB_ENV_NAME \
-          --version-label v$(date +%s)
+          --version-label $VERSION_LABEL
