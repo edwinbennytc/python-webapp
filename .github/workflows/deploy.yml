@@ -31,7 +31,8 @@ jobs:
         docker push $ECR_REPOSITORY_URI:latest
 
     - name: Debug ECR Repository URI
-      run: echo "ECR Repository URI: ${{ secrets.ECR_REPOSITORY_URI }}"
+      run: | 
+        echo 'ECR Repository URI: ${{ secrets.ECR_REPOSITORY_URI }}'
 
     - name: Create Dockerrun.aws.json file
       run: |
