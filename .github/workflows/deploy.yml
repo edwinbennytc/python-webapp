@@ -33,9 +33,9 @@ jobs:
     - name: Create Dockerrun.aws.json file
       run: |
         echo '{
-          "AWSEBDockerrunVersion": 1,
+          "AWSEBDockerrunVersion": "1",
           "Image": {
-            "Name": "866934333672.dkr.ecr.ap-southeast-2.amazonaws.com/eb/python-webapp:latest",
+            "Name": "'"$ECR_REPOSITORY_URI"':latest",
             "Update": "true"
           },
           "Ports": [
