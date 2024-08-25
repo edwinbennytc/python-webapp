@@ -30,16 +30,12 @@ jobs:
         docker build -t $ECR_REPOSITORY_URI:latest .
         docker push $ECR_REPOSITORY_URI:latest
 
-    - name: Debug ECR Repository URI
-      run: | 
-        echo 'ECR Repository URI: ${{ secrets.ECR_REPOSITORY_URI }}'
-
     - name: Create Dockerrun.aws.json file
       run: |
         echo '{
           "AWSEBDockerrunVersion": 1,
           "Image": {
-            "Name": "'"$ECR_REPOSITORY_URI"':latest",
+            "Name": "866934333672.dkr.ecr.ap-southeast-2.amazonaws.com/eb/python-webapp:latest",
             "Update": "true"
           },
           "Ports": [
