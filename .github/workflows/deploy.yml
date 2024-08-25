@@ -35,7 +35,7 @@ jobs:
         echo '{
           "AWSEBDockerrunVersion": 1,
           "Image": {
-            "Name": "'$ECR_REPOSITORY_URI':latest",
+            "Name": "'"$ECR_REPOSITORY_URI"':latest",
             "Update": "true"
           },
           "Ports": [
