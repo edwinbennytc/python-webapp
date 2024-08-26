@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "python-webapp-container",
-            "image": "866934333672.dkr.ecr.ap-southeast-2.amazonaws.com/eb/python-webapp:app1",
+            "image": "866934333672.dkr.ecr.ap-southeast-2.amazonaws.com/eb/python-webapp:latest",
             "cpu": 1024,
             "memory": 2048,
             "memoryReservation": 1024,
