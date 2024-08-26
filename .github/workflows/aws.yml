@@ -12,7 +12,7 @@ env:
   ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
   ECS_SERVICE: ${{ secrets.ECS_SERVICE_NAME }}
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER_NAME }}
-  ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION }}
+  ECS_TASK_DEFINITION: deploy/task-def.json
   CONTAINER_NAME: python-webapp-container           
 
 permissions:
@@ -54,11 +54,12 @@ jobs:
 
     - name: Build, tag, and push Docker image to ECR
       env:
-        ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
+        ECR_REPOSITORY_URI: ${{ env.ECR_REPOSITORY_URI }}
+        IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $ECR_REPOSITORY_URI:latest .
-        docker push $ECR_REPOSITORY_URI:latest
-        echo "image=$ECR_REPOSITORY_URI:latest" >> $GITHUB_OUTPUT
+        docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG .
+        docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
+        echo "image=$ECR_REPOSITORY_URI:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
@@ -66,7 +67,7 @@ jobs:
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
+        image: $ECR_REPOSITORY_URI:latest
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
