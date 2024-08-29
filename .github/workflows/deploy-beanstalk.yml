@@ -59,9 +59,11 @@ jobs:
         # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         # AWS_REGION: ${{ secrets.AWS_REGION }}
         # ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
-        EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
-        EB_APP_NAME: ${{ secrets.EB_APP_NAME }}
+        # EB_ENV_NAME: ${{ secrets.EB_ENV_NAME }}
+        # EB_APP_NAME: ${{ secrets.EB_APP_NAME }}
         S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        EB_ENV_NAME: "tf-eb-env"
+        EB_APP_NAME: "tf-eb-app"
         S3_KEY: Dockerrun.aws.json
       run: |
         VERSION_LABEL=v$(date +%s)
